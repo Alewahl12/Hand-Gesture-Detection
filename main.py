@@ -11,6 +11,7 @@ cap = cv2.VideoCapture(0)
 
 # Inicializacao do modelo de deteccao das maos
 with mp_hands.Hands(
+    max_num_hands = 1, # Quantidade de maos a serem detectadas
     model_complexity =0, # 0 é mais rapido enquanto 1 é mais preciso
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5) as hands:
