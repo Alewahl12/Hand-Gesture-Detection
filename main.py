@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import csv
 
 # Inicializacao dos modulos do mediapipe para detecçao das maos
 mp_drawing = mp.solutions.drawing_utils
@@ -12,7 +13,7 @@ cap = cv2.VideoCapture(0)
 # Inicializacao do modelo de deteccao das maos
 with mp_hands.Hands(
     max_num_hands = 1, # Quantidade de maos a serem detectadas
-    model_complexity =0, # 0 é mais rapido enquanto 1 é mais preciso
+    model_complexity =1, # 0 é mais rapido enquanto 1 é mais preciso
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5) as hands:
 
@@ -44,8 +45,19 @@ with mp_hands.Hands(
                 mp_drawing_styles.get_default_hand_landmarks_style(),
                 mp_drawing_styles.get_default_hand_connections_style())
 
+                landmarks = [(lm.x, lm.y, lm.z) for lm in hand_landmarks.landmark]
+
+            #Salvar landmarks em um csv
+            rotulo_gesto = "aberto"
+
+            flat_landmarks = [coord for lm in landmarks for coord in lm]
+
+            with open('landmark_gesto.csv', 'a', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(flat_landmarks + [rotulo_gesto])
+
         cv2.imshow('Camera', cv2.flip(frame, 1)) # Mostra a camera espelhada
-        if cv2.waitKey(1) == ord('q'):
+        if cv2.waitKey(1) == ord('q'): # Espera a tecla q ser pressionada
             break
 
 cap.release()
